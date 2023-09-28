@@ -139,7 +139,7 @@ const App = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      <div style={{ margin: '600px auto', textAlign: 'center' }}>
+      <div style={{ margin: '400px auto', textAlign: 'center' }}>
         Message from signalR:{' '}
         <span style={{ color: 'green' }}>{message && JSON.parse(message)?.message}</span>
         <Stack direction='row' justifyContent='center' spacing={2} mt={2}>

@@ -29,6 +29,11 @@ Open [https://localhost:5001/swagger/index.html](https://localhost:5001/swagger/
 We are not using the SayHello API but you can see that your app is up and running the signal hub is available on [https://localhost:5001/hub](https://localhost:5001/hub)
 you get `Connection ID required` if you try to access it trough browser.
 
+Two Hubs -->
+First: Open [https://localhost:5001/swagger/index.html](https://localhost:5001/swagger/index.html) to view it in the browser.
+
+Second: Open [https://localhost:5002/swagger/index.html](https://localhost:5002/swagger/index.html) to view it in the browser.
+
 ### Fire up the FrontEnd
 
 Navigate to the frontend folder and run `npm ci` to get the dependencies, followed by `npm start`
