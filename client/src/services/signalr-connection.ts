@@ -1,12 +1,13 @@
 import * as signalR from '@microsoft/signalr';
+import { IMessageHub } from '@/interfaces/IMessageHub';
 
 const URL1 = import.meta.env.VITE_HUB_ADDRESS_1 ?? 'https://localhost:5001/hub'; //or whatever your backend port is
 const URL2 = import.meta.env.VITE_HUB_ADDRESS_2 ?? 'https://localhost:5002/hub'; //or whatever your backend port is
 class Connector {
   private connection1: signalR.HubConnection;
   private connection2: signalR.HubConnection;
-  public events1: (onMessageReceived: (username: string, message1: string) => void) => void;
-  public events2: (onMessageReceived: (username: string, message2: string) => void) => void;
+  public events1: (onMessageReceived: (username: string, message: IMessageHub) => void) => void;
+  public events2: (onMessageReceived: (username: string, message: IMessageHub) => void) => void;
   static instance: Connector;
 
   constructor() {
@@ -29,7 +30,7 @@ class Connector {
 
     this.events1 = (onMessageReceived) => {
       this.connection1.on('messageReceived', (username, message) => {
-        onMessageReceived(username, message);
+        return onMessageReceived(username, message);
       });
     };
     this.events2 = (onMessageReceived) => {
