@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import Connector from '../../services/signalr-connection';
 import {
   AppBar,
@@ -24,7 +25,8 @@ const App = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const { newMessage, events } = Connector();
+  //connect to @microsoft/signalR
+  const { newMessage1, events1, newMessage2, events2 } = Connector();
   const [message, setMessage] = useState('');
 
   const open = Boolean(anchorEl);
@@ -36,7 +38,7 @@ const App = () => {
   });
 
   useEffect(() => {
-    events((_, message) => {
+    events1((_, message) => {
       const newData = data.map((obj, i) => {
         const idMessage = JSON.parse(message).id;
         const messageFromMessage = JSON.parse(message).message;
@@ -46,7 +48,20 @@ const App = () => {
         }
         return obj;
       });
+      setData(newData);
+      setMessage(message);
+    });
 
+    events2((_, message) => {
+      const newData = data.map((obj, i) => {
+        const idMessage = JSON.parse(message).id;
+        const messageFromMessage = JSON.parse(message).message;
+        if (i === idMessage) {
+          const newOptions = [messageFromMessage, ...obj.options];
+          return { ...obj, options: newOptions };
+        }
+        return obj;
+      });
       setData(newData);
       setMessage(message);
     });
@@ -55,7 +70,7 @@ const App = () => {
   const handleSendMessage = (event: React.MouseEvent<HTMLElement>, index: number) => {
     const json = JSON.stringify({ message: `New order from qashop2 @ ${dateNow}`, id: index });
 
-    newMessage(json);
+    index === 0 ? newMessage2(json) : newMessage1(json);
   };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
@@ -68,104 +83,106 @@ const App = () => {
 
   return (
     <div className='app'>
-      <AppBar component='nav' sx={{ minHeight: '0px' }}>
-        <Toolbar>
-          <Typography
-            variant='h6'
-            component='div'
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-          ></Typography>
-          <Box sx={{ display: { sm: 'block' } }}>
-            {data.map((item, index) => (
-              <span key={item.title + index}>
-                <Tooltip title='Account settings'>
-                  <Button
-                    onClick={(e) => handleClick(e, index)}
-                    sx={{
-                      color: '#fff',
-                      textTransform: 'capitalize',
-                      paddingRight: ' 24px',
-                      paddingLeft: '14px',
-                    }}
-                    aria-controls={open ? 'account-menu' : undefined}
-                    aria-haspopup='true'
-                    aria-expanded={open ? 'true' : undefined}
-                  >
-                    {item.title}
-                    <Badge
-                      badgeContent={item.options.length}
-                      color='error'
-                      max={99}
-                      sx={styles.badge}
-                    />
-                  </Button>
-                </Tooltip>
-                <Menu
-                  anchorEl={anchorEl}
-                  id='account-menu'
-                  open={open}
-                  onClose={() => handleClose()}
-                  onClick={handleClose}
-                  PaperProps={styles.menu}
-                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                >
-                  <Typography
-                    variant='h6'
-                    sx={{ padding: '0 19px 4px', color: 'rgba(0, 0, 0, 0.87)' }}
-                  >
-                    {data[currentIndex].label}
-                  </Typography>
-                  <Divider sx={{ marginBottom: '6px' }} />
-                  {data[currentIndex].options.slice(0, 4).map((option, index: number) => (
-                    <MenuItem
-                      key={index}
-                      disabled={false}
-                      onClick={(event) => handleClose(event, index)}
+      <ErrorBoundary fallback={<div>Something went wrong</div>}>
+        <AppBar component='nav' sx={{ minHeight: '0px' }}>
+          <Toolbar>
+            <Typography
+              variant='h6'
+              component='div'
+              sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+            ></Typography>
+            <Box sx={{ display: { sm: 'block' } }}>
+              {data.map((item, index) => (
+                <span key={item.title + index}>
+                  <Tooltip title='Account settings'>
+                    <Button
+                      onClick={(e) => handleClick(e, index)}
+                      sx={{
+                        color: '#fff',
+                        textTransform: 'capitalize',
+                        paddingRight: ' 24px',
+                        paddingLeft: '14px',
+                      }}
+                      aria-controls={open ? 'account-menu' : undefined}
+                      aria-haspopup='true'
+                      aria-expanded={open ? 'true' : undefined}
                     >
-                      <ListItemIcon>
-                        <Shop2Icon fontSize='small' sx={{ mr: '6px', mt: '1px' }} />
-                      </ListItemIcon>
-                      {option}
+                      {item.title}
+                      <Badge
+                        badgeContent={item.options.length}
+                        color='error'
+                        max={99}
+                        sx={styles.badge}
+                      />
+                    </Button>
+                  </Tooltip>
+                  <Menu
+                    anchorEl={anchorEl}
+                    id='account-menu'
+                    open={open}
+                    onClose={() => handleClose()}
+                    onClick={handleClose}
+                    PaperProps={styles.menu}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  >
+                    <Typography
+                      variant='h6'
+                      sx={{ padding: '0 19px 4px', color: 'rgba(0, 0, 0, 0.87)' }}
+                    >
+                      {data[currentIndex].label}
+                    </Typography>
+                    <Divider sx={{ marginBottom: '6px' }} />
+                    {data[currentIndex].options.slice(0, 4).map((option, index: number) => (
+                      <MenuItem
+                        key={index}
+                        disabled={false}
+                        onClick={(event) => handleClose(event, index)}
+                      >
+                        <ListItemIcon>
+                          <Shop2Icon fontSize='small' sx={{ mr: '6px', mt: '1px' }} />
+                        </ListItemIcon>
+                        {option}
+                      </MenuItem>
+                    ))}
+                    <Divider />
+                    <MenuItem onClick={handleClose}>
+                      View all {data[currentIndex].options.length} new order and quotes
                     </MenuItem>
-                  ))}
-                  <Divider />
-                  <MenuItem onClick={handleClose}>
-                    View all {data[currentIndex].options.length} new order and quotes
-                  </MenuItem>
-                </Menu>
-              </span>
-            ))}
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <div style={{ margin: '400px auto', textAlign: 'center' }}>
-        Message from signalR:{' '}
-        <span style={{ color: 'green' }}>{message && JSON.parse(message)?.message}</span>
-        <Stack direction='row' justifyContent='center' spacing={2} mt={2}>
-          <Button
-            variant='contained'
-            sx={{ textTransform: 'capitalize' }}
-            onClick={(e) => handleSendMessage(e, 0)}
-          >
-            add to D2DLink
-          </Button>
-          <Button
-            variant='contained'
-            sx={{ textTransform: 'capitalize' }}
-            onClick={(e) => handleSendMessage(e, 1)}
-          >
-            add to CollisionLink
-          </Button>
-          <Button
-            variant='contained'
-            sx={{ textTransform: 'capitalize' }}
-            onClick={(e) => handleSendMessage(e, 2)}
-          >
-            add to MarketplaceDirect
-          </Button>
-        </Stack>
-      </div>
+                  </Menu>
+                </span>
+              ))}
+            </Box>
+          </Toolbar>
+        </AppBar>
+        <div style={{ margin: '400px auto', textAlign: 'center' }}>
+          Message from signalR:{' '}
+          <span style={{ color: 'green' }}>{message && JSON.parse(message)?.message}</span>
+          <Stack direction='row' justifyContent='center' spacing={2} mt={2}>
+            <Button
+              variant='contained'
+              sx={{ textTransform: 'capitalize' }}
+              onClick={(e) => handleSendMessage(e, 0)}
+            >
+              add to D2DLink
+            </Button>
+            <Button
+              variant='contained'
+              sx={{ textTransform: 'capitalize' }}
+              onClick={(e) => handleSendMessage(e, 1)}
+            >
+              add to CollisionLink
+            </Button>
+            <Button
+              variant='contained'
+              sx={{ textTransform: 'capitalize' }}
+              onClick={(e) => handleSendMessage(e, 2)}
+            >
+              add to MarketplaceDirect
+            </Button>
+          </Stack>
+        </div>
+      </ErrorBoundary>
     </div>
   );
 };
