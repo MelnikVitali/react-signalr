@@ -1,42 +1,82 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
 import ReactDOM from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ThemeProvider } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
-import toast, { Toaster } from 'react-hot-toast';
-import theme from './theme';
 import App from './components/App';
-import { rootCertificates } from 'tls';
+import ErrorBoundaryFallback from './components/ErrorBoundaryFallback';
 
-// const domElement = document.getElementById('root');
+class TestElement extends HTMLElement {
+  constructor() {
+    super();
+    this.setAttribute('id', 'react-root'); // Setting an attribute
+  }
+}
+// Register the custom element
+customElements.define('signalr-component', TestElement);
 
-// const shadow = domElement?.attachShadow({ mode: 'open' });
+const container = document.querySelector('#react-root');
+const shadowContainer = container?.attachShadow({ mode: 'open' });
+const emotionRoot = document.createElement('style');
+const shadowRootElement = document.createElement('div');
+shadowContainer?.appendChild(emotionRoot);
+shadowContainer?.appendChild(shadowRootElement);
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+const cache = createCache({
+  key: 'css',
+  prepend: true,
+  container: emotionRoot,
+});
+
+const shadowTheme = createTheme({
+  palette: {
+    primary: {
+      main: '#1D3967',
+    },
+  },
+  typography: {
+    fontFamily: [
+      'Roboto',
+      'Segoe UI',
+      'Oxygen',
+      'Ubuntu',
+      'Cantarell',
+      'Fira Sans',
+      'Droid Sans',
+      'Helvetica Neue',
+      'sans-serif',
+    ].join(','),
+  },
+  components: {
+    MuiPopover: {
+      defaultProps: {
+        container: shadowRootElement,
+      },
+    },
+    MuiPopper: {
+      defaultProps: {
+        container: shadowRootElement,
+      },
+    },
+    MuiModal: {
+      defaultProps: {
+        container: shadowRootElement,
+      },
+    },
+  },
+});
+
+ReactDOM.createRoot(shadowRootElement as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      {/* <CssBaseline /> */}
-      <Toaster />
-      <ErrorBoundary
-        fallback={
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 64,
-              border: '1px solid #d32f2f',
-              color: '#d32f2f',
-            }}
-          >
-            Something went wrong with SignalR Connection!
-          </Box>
-        }
-      >
-        <App />
-      </ErrorBoundary>
-    </ThemeProvider>
+    <CacheProvider value={cache}>
+      <ThemeProvider theme={shadowTheme}>
+        <CssBaseline />
+        <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
+          <App />
+        </ErrorBoundary>
+      </ThemeProvider>
+    </CacheProvider>
   </React.StrictMode>,
 );

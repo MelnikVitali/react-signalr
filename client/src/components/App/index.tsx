@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Connector from '@/services/signalr-connection';
-import { AppBar, Box, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Container, Toolbar, Typography } from '@mui/material';
 import { navItems } from '@/data/navItems';
 import ButtonGroup from '@/components/ButtonGroup';
 import NavButton from '@/components/NavButton';
@@ -14,7 +14,7 @@ const App = () => {
   const [data, setData] = useState<INavItem[]>(navItems);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [message, setMessage] = useState<IMessageHub | ''>('');
+  const [message, setMessage] = useState<IMessageHub | string>('');
 
   //connect to @microsoft/signalR
   const { newMessage1, events1, newMessage2, events2 } = Connector();
@@ -55,7 +55,7 @@ const App = () => {
   };
 
   return (
-    <div className='app'>
+    <>
       <AppBar component='nav' sx={{ minHeight: '0px' }}>
         <Toolbar>
           <Typography variant='h6' component='div' sx={styles.typography} />
@@ -83,7 +83,7 @@ const App = () => {
         <ButtonGroup handler={handleSendMessageFirstHub} color='info' numberHub='1hub' />
         <ButtonGroup handler={handleSendMessageSecondHub} color='primary' numberHub='2hub' />
       </Box>
-    </div>
+    </>
   );
 };
 
