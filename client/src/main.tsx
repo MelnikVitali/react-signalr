@@ -8,14 +8,14 @@ import CssBaseline from '@mui/material/CssBaseline';
 import App from './components/App';
 import ErrorBoundaryFallback from './components/ErrorBoundaryFallback';
 
-class TestElement extends HTMLElement {
+class SignalRElement extends HTMLElement {
   constructor() {
     super();
     this.setAttribute('id', 'react-root'); // Setting an attribute
   }
 }
 // Register the custom element
-customElements.define('signalr-component', TestElement);
+customElements.define('signalr-component', SignalRElement);
 
 const container = document.querySelector('#react-root');
 const shadowContainer = container?.attachShadow({ mode: 'open' });
