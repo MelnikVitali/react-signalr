@@ -2,23 +2,8 @@ import { pxToRem } from './utils/pxToRem';
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1D3967',
-    },
-  },
   typography: {
-    fontFamily: [
-      'Roboto',
-      'Segoe UI',
-      'Oxygen',
-      'Ubuntu',
-      'Cantarell',
-      'Fira Sans',
-      'Droid Sans',
-      'Helvetica Neue',
-      'sans-serif',
-    ].join(','),
+    fontFamily: ['Roboto', 'sans-serif'].join(','),
   },
   components: {
     MuiBackdrop: {
@@ -40,9 +25,10 @@ const theme = createTheme({
             outline: 'none',
           },
           body: {
-            margin: '0 auto',
+            margin: '0',
+            padding: '0',
           },
-          '#root': {
+          '#react-root': {
             minHeight: '100%',
             height: '100vh',
             width: '100%',
