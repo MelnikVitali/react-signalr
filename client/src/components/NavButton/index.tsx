@@ -1,5 +1,5 @@
 import { Badge, Button, Tooltip } from '@mui/material';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import MenuOptions from '@/components/MenuOptions';
 import { INavItem } from '@/interfaces/INavItem';
 import { styles } from './styles';
@@ -12,6 +12,7 @@ interface Props {
   data: INavItem[];
   item: INavItem;
   index: number;
+  activeBtn: number | null;
 }
 
 const NavButton: FC<Props> = ({
@@ -22,14 +23,19 @@ const NavButton: FC<Props> = ({
   currentIndex,
   item,
   index,
+  activeBtn,
 }) => {
   const open = Boolean(anchorEl);
+
   return (
     <>
-      <Tooltip title='Account settings'>
+      <Tooltip title='Open notifications' arrow>
         <Button
           onClick={(e) => handleClick(e, index)}
-          sx={styles.btn}
+          sx={{
+            ...styles.btn,
+            backgroundColor: `${activeBtn !== null && activeBtn == index ? '#36558D' : 'primary'}`,
+          }}
           aria-controls={open ? 'account-menu' : undefined}
           aria-haspopup='true'
           aria-expanded={open ? 'true' : undefined}
