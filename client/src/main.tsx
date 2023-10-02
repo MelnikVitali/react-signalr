@@ -38,16 +38,18 @@ const shadowTheme = createTheme({
   },
   typography: {
     fontFamily: [
+      '-apple-system',
       'Roboto',
-      'Segoe UI',
-      'Oxygen',
-      'Ubuntu',
-      'Cantarell',
-      'Fira Sans',
-      'Droid Sans',
-      'Helvetica Neue',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      '"Helvetica Neue"',
+      'Arial',
       'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
     ].join(','),
+    fontSize: 16,
   },
   components: {
     MuiPopover: {

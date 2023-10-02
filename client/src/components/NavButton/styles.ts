@@ -6,6 +6,10 @@ export const styles = {
     textTransform: 'capitalize',
     paddingRight: ' 24px',
     paddingLeft: '14px',
+    minHeight: '64px',
+    '&:hover': {
+      backgroundColor: '#36558D',
+    },
   },
   badge: {
     paddingLeft: '22px ',
