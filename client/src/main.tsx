@@ -11,16 +11,17 @@ import ErrorBoundaryFallback from './components/ErrorBoundaryFallback';
 class SignalRElement extends HTMLElement {
   constructor() {
     super();
-    this.setAttribute('id', 'react-root'); // Setting an attribute
+    this.setAttribute('id', 'signalr-root'); // Setting an attribute
   }
 }
 // Register the custom element
 customElements.define('signalr-component', SignalRElement);
 
-const container = document.querySelector('#react-root');
+const container = document.querySelector('#signalr-root');
 const shadowContainer = container?.attachShadow({ mode: 'open' });
 const emotionRoot = document.createElement('style');
 const shadowRootElement = document.createElement('div');
+shadowRootElement.setAttribute('id', 'react-root');
 shadowContainer?.appendChild(emotionRoot);
 shadowContainer?.appendChild(shadowRootElement);
 
